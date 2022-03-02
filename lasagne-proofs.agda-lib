@@ -1,0 +1,6 @@
+name: lasagne-proofs
+include:
+  src
+  lib/dodo/src/
+depend:
+  standard-library-1.7.1
