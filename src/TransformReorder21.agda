@@ -40,8 +40,19 @@ open WellFormed
 
 -- # Definitions
 
--- 
--- Note that this structure describes the /target/.
+-- | A proof stating the /target/ execution could only have been generated from a
+-- program that is mapped through the reordering transformation.
+--
+--
+-- # Order
+--
+-- Note that the /target/ order is:
+--
+-- > ev₁  -pi-  ev₂  -rmw-  ev₃
+--
+-- While the /source/ order is:
+--
+-- > ev₂  -rmw-  ev₃  -pi-  ev₁
 record ReorderRestricted21 (ex : Execution LabelLIMM) : Set₁ where
   field
     consistent : IsLIMMConsistent ex
@@ -59,7 +70,10 @@ record ReorderRestricted21 (ex : Execution LabelLIMM) : Set₁ where
     rmw₂₃ᵗ : rmw ex ev₂ ev₃
 
 
--- | Relates the source and target executions. They are mostly identical, except for the reordered pair.
+-- | Relates the events in the source and target executions, following the
+-- transformation on the instructions.
+--
+-- They are mostly identical, except for the reordered pair.
 record ReordersTo21 (src : Execution LabelLIMM) {dst : Execution LabelLIMM} (dst-ok : ReorderRestricted21 dst) : Set₁ where
   open ReorderRestricted21 dst-ok
   

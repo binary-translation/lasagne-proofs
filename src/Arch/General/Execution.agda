@@ -188,12 +188,26 @@ fri = internal fr
 
 -- # Definitions: Well-formedness
 
+-- | Wellformedness declares that an execution "makes sense".
+--
+-- For instance, it guarantees every Read event reads-from exactly one Write event,
+-- `po` and `co` are actually /orders/, and initialization events happen at the beginning,
+-- and so on.
+--
+-- Note that Wellformedness is a /general/ property that holds for any execution
+-- (in the axiomatic model) regardless of the architecture-specifics.
+-- Architecture-specific constraints should be included in an Architecture's /consistency/
+-- specification.
 record WellFormed {Label : Set} {{_ : LabelClass Label}} (ex : Execution Label) : Set₁ where
   field
     -- # General constraints
 
+    -- | Event UIDs are unique.
+    -- That is, for every UID there exists (at most) one event in the execution.
     unique-ids : ∀ (uid : UniqueId) → Unique₁ _≡_ (HasUid uid ∩₁ events ex)
 
+    -- | Event membership is unique.
+    -- That is, there is only one way of stating that an event `x` is in the execution.
     events-unique : UniquePred (events ex)
     
     rmw-def  : rmw ex ⊆₂ po-imm ex
@@ -208,10 +222,14 @@ record WellFormed {Label : Set} {{_ : LabelClass Label}} (ex : Execution Label) 
     
     -- Note that 'po' and 'co' are /strict/ orders (i.e., irreflexive).
     -- If they were non-strict they'd always be cyclic.
+    
+    -- `po` is /total/ over same-thread events, and init events, which don't have a thread ID
     po-tri : ∀ (tid : ThreadId) → Trichotomous _≡_ (filter-rel ((EvInit ∪₁ HasTid tid) ∩₁ events ex) (po ex))
-    co-tri : ∀ (loc : Location) → Trichotomous _≡_ (filter-rel (EvW ∩₁ HasLoc loc ∩₁ events ex) (co ex))
     -- between any two non-immediate po-related events, there exists another event
     po-splittable : SplittableOrder (po ex)
+    
+    -- `co` is /total/ over same-location Write events
+    co-tri : ∀ (loc : Location) → Trichotomous _≡_ (filter-rel (EvW ∩₁ HasLoc loc ∩₁ events ex) (co ex))
     co-trans : Transitive (co ex)
 
     -- For every unique ID, either there is an event with that ID, or there is not

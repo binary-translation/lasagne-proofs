@@ -40,8 +40,19 @@ open WellFormed
 
 -- # Definitions
 
--- 
--- Note that this structure describes the /target/.
+-- | A proof stating the /target/ execution could only have been generated from a
+-- program that is mapped through the reordering transformation.
+--
+--
+-- # Order
+--
+-- Note that the /target/ order is:
+--
+-- > ev₁  -rmw-  ev₂  -pi-  ev₃
+--
+-- While the /source/ order is:
+--
+-- > ev₃  -pi-  ev₁  -rmw-  ev₂
 record ReorderRestricted12 (ex : Execution LabelLIMM) : Set₁ where
   field
     consistent : IsLIMMConsistent ex
@@ -59,22 +70,27 @@ record ReorderRestricted12 (ex : Execution LabelLIMM) : Set₁ where
     pi₂₃ᵗ  : po-imm ex ev₂ ev₃
 
 
--- | Relates the source and target executions. They are mostly identical, except for the reordered pair.
+-- | Relates the events in the source and target executions, following the
+-- transformation on the instructions.
+--
+-- They are mostly identical, except for the reordered pair.
 record ReordersTo12 (src : Execution LabelLIMM) {dst : Execution LabelLIMM} (dst-ok : ReorderRestricted12 dst) : Set₁ where
   open ReorderRestricted12 dst-ok
   
   field
+    -- | The set of event is identical 
     events-preserved : events src ⇔₁ events dst
     co-preserved     : co src  ⇔₂ co dst
     rf-preserved     : rf src  ⇔₂ rf dst
     rmw-preserved    : rmw src ⇔₂ rmw dst
 
+    -- | The po-relation is preserved between all events, except the reordered pairs
     po-preserved⇒ : ∀ {x y : Event LabelLIMM} → ¬ (x ≡ ev₃ × y ≡ ev₁) → ¬ (x ≡ ev₃ × y ≡ ev₂) → po src x y → po dst x y
+    -- | The po-relation is preserved between all events, except the reordered pairs
     po-preserved⇐ : ∀ {x y : Event LabelLIMM} → ¬ (x ≡ ev₁ × y ≡ ev₃) → ¬ (x ≡ ev₂ × y ≡ ev₃) → po dst x y → po src x y
     
 
--- # Operations
-
+-- | Helpers. The definitions and properties are derived from `ReorderRestricted12` alone.
 module Extra {ex : Execution LabelLIMM} (ex-res : ReorderRestricted12 ex) where
 
   open ReorderRestricted12 ex-res
@@ -83,12 +99,14 @@ module Extra {ex : Execution LabelLIMM} (ex-res : ReorderRestricted12 ex) where
     wf = wellformed
 
 
+  -- | ev₁ is an atomic read event, because it is in the domain of `rmw`
   ev₁-rₐ : EvRₜ trmw ev₁
   ev₁-rₐ = rmwˡ-r wf (take-dom (rmw ex) rmw₁₂ᵗ)
 
   ev₁-r : EvR ev₁
   ev₁-r = rₜ⇒r ev₁-rₐ
 
+  -- | ev₂ is an atomic write event, because it is in the co-domain of `rmw`.
   ev₂-wₐ : EvWₜ trmw ev₂
   ev₂-wₐ = rmwʳ-w wf (take-codom (rmw ex) rmw₁₂ᵗ)
 
@@ -96,15 +114,19 @@ module Extra {ex : Execution LabelLIMM} (ex-res : ReorderRestricted12 ex) where
   ev₂-w = wₜ⇒w ev₂-wₐ
 
 
+  -- | ev₁ and ev₂ are immediately po-related in the target
   pi₁₂ᵗ : po-imm ex ev₁ ev₂
   pi₁₂ᵗ = ⊆₂-apply (rmw-def wf) rmw₁₂ᵗ
 
+  -- | ev₁ and ev₂ are po-related in the target
   po₁₂ᵗ : po ex ev₁ ev₂
   po₁₂ᵗ = proj₁ pi₁₂ᵗ
 
+  -- | ev₂ and ev₃ are po-related in the target
   po₂₃ᵗ : po ex ev₂ ev₃
   po₂₃ᵗ = proj₁ pi₂₃ᵗ
 
+  -- | ev₁ and ev₃ are po-related in the target
   po₁₃ᵗ : po ex ev₁ ev₃
   po₁₃ᵗ = po-trans wf po₁₂ᵗ po₂₃ᵗ
 

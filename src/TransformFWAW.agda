@@ -114,9 +114,11 @@ module Extra {ex : Execution LabelLIMM} (ex-ok : FWAW-Restricted ex) where
   po[ep₂]ᵗ = po-trans wf (proj₁ pi[ep₁]ᵗ) (proj₁ pi[p₁p₂]ᵗ)
 
 
--- | Relates the source and target executions.
+-- | Relates the events in the source and target executions, following the
+-- transformation on the instructions.
 --
--- If the source has the additional write event, then - by WellFormedness - it is part of the execution.
+-- If the source has the additional write event, then - by WellFormedness -
+-- it is part of the execution.
 record FWAWMapping (src : Execution LabelLIMM) {dst : Execution LabelLIMM} (dst-res : FWAW-Restricted dst) : Set where
   open FWAW-Restricted dst-res
   open Extra dst-res

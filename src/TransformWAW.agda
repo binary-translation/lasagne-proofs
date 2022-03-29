@@ -85,7 +85,8 @@ module Extra {ex : Execution LabelLIMM} (ex-ok : WAW-Restricted ex) where
   preserved-has-val = w-has-val preserved-ev-w
 
 
--- | Relates the source and target executions.
+-- | Relates the events in the source and target executions, following the
+-- transformation on the instructions.
 --
 -- If the source has the additional write event, then - by WellFormedness - it is part of the execution.
 record WAWMapping (src : Execution LabelLIMM) {dst : Execution LabelLIMM} (dst-res : WAW-Restricted dst) : Set where

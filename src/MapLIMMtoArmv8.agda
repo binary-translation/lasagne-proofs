@@ -61,6 +61,10 @@ data IsArmv8EventLIMM : Event LabelArmv8 → Set where
   ev-f    : {uid : UniqueId} {tid : ThreadId} {mode : Armv8.F-mode} → IsArmv8EventLIMM (event uid tid (lab-f mode))
 
 
+-- | A proof that a Armv8 execution could only have been generated from a Armv8 program
+-- that is mapped from an LIMM program.
+--
+-- This follows from mappings on the instruction-level. (Which we omit)
 record Armv8-LIMMRestricted (ex : Execution LabelArmv8) : Set₁ where
   field
     consistent : IsArmv8Consistent ex
@@ -93,6 +97,8 @@ record Armv8-LIMMRestricted (ex : Execution LabelArmv8) : Set₁ where
 open Armv8-LIMMRestricted
 
 
+-- | Relates the events in the source and target executions, following the
+-- mapping on the instructions.
 record LIMM⇒Armv8 (src : Execution LabelLIMM) {dst : Execution LabelArmv8} (dst-a8 : Armv8Execution dst) : Set where
   field
     -- Instrs: LD ↦ LDR

@@ -101,9 +101,11 @@ module Extra {ex : Execution LabelLIMM} (ex-ok : RAW-Restricted ex) where
   preserved-has-val = w-has-val preserved-ev-w
 
 
--- | Relates the source and target executions.
+-- | Relates the events in the source and target executions, following the
+-- transformation on the instructions.
 --
--- If the source has the additional write event, then - by WellFormedness - it is part of the execution.
+-- If the source has the additional write event, then - by WellFormedness -
+-- it is part of the execution.
 record RAWMapping (src : Execution LabelLIMM) {dst : Execution LabelLIMM} (dst-res : RAW-Restricted dst) : Set where
   open RAW-Restricted dst-res
   open Extra dst-res

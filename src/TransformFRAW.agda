@@ -112,9 +112,11 @@ module Extra {ex : Execution LabelLIMM} (ex-ok : FRAW-Restricted ex) where
   pres₁-has-val = w-has-val pres₁-w
 
 
--- | Relates the source and target executions.
+-- | Relates the events in the source and target executions, following the
+-- transformation on the instructions.
 --
--- If the source has the additional read event, then - by WellFormedness - it is part of the execution.
+-- If the source has the additional read event, then - by WellFormedness -
+-- it is part of the execution.
 record FRAWMapping (src : Execution LabelLIMM) {dst : Execution LabelLIMM} (dst-res : FRAW-Restricted dst) : Set where
   open FRAW-Restricted dst-res
   open Extra dst-res

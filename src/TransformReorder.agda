@@ -46,6 +46,20 @@ open Execution
 -- `TransformReorder21`)
 --
 
+
+-- | A proof stating the /target/ execution could only have been generated from a
+-- program that is mapped through the reordering transformation.
+--
+--
+-- # Order
+--
+-- Note that the /target/ order is:
+--
+-- > ev₁  -pi-  ev₂
+--
+-- While the /source/ order is:
+--
+-- > ev₂  -pi-  ev₁
 record ReorderRestricted (ex : Execution LabelLIMM) : Set₁ where
   field
     consistent : IsLIMMConsistent ex
@@ -91,7 +105,10 @@ record ReorderRestricted (ex : Execution LabelLIMM) : Set₁ where
     pi[12]ᵗ : po-imm ex ev₁ ev₂
 
 
--- | Relates the source and target executions. They are mostly identical, except for the reordered pair.
+-- | Relates the events in the source and target executions, following the
+-- transformation on the instructions.
+--
+-- They are mostly identical, except for the reordered pair.
 record ReordersTo (src : Execution LabelLIMM) {dst : Execution LabelLIMM} (dst-ok : ReorderRestricted dst) : Set₁ where
   open ReorderRestricted dst-ok
   
@@ -107,6 +124,7 @@ record ReordersTo (src : Execution LabelLIMM) {dst : Execution LabelLIMM} (dst-o
 
 -- # Operations
 
+-- | Helpers. The definitions and properties are derived from `ReorderRestricted` alone.
 module Extra {ex : Execution LabelLIMM} (δ : ReorderRestricted ex) where
 
   open ReorderRestricted δ

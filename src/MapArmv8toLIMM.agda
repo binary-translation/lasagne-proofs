@@ -51,7 +51,7 @@ open Execution
 --
 
 
--- | Demonstrates the LIMM execution was produced by a program mapped from
+-- | Demonstrates the LIMM execution was produced by a LIMM program mapped from
 -- an Armv8 program.
 record LIMM-Armv8Restricted (ex : Execution LabelLIMM) : Set₁ where
   field
@@ -111,7 +111,8 @@ record LIMM-Armv8Restricted (ex : Execution LabelLIMM) : Set₁ where
     org-skip : (events ex ∩₁ EvSkip)       ⇔₁ OptPred₃ org-skip-fld org-skip-isb org-skip-skip
 
 
--- | Relates the source and target execution by the mapping rules
+-- | Relates the events in the source and target executions, following the
+-- mapping on the instructions.
 record Armv8⇒LIMM (src : Execution LabelArmv8) (dst : Execution LabelLIMM) : Set where
   field
     -- Instrs: LD  ↦  LD;F_RM

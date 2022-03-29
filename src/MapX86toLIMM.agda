@@ -24,6 +24,7 @@ open Execution
 
 -- # Definitions
 
+--
 -- Mapping - X86 ⇒ LIMM
 --
 --
@@ -41,6 +42,7 @@ open Execution
 -- Rₗ(x,v);rmw;W(x,v') ↦ Rₗ(x,v);rmw;Wₗ(x,v')  || successful RMW
 -- Rₗ(x,v)             ↦ Rₗ(x,v)               || failed RMW
 -- F                   ↦ F_SC
+--
 
 -- | A proof that a LIMM execution could only have been generated from a LIMM program
 -- that is mapped from an X86 program.
@@ -65,6 +67,8 @@ record LIMM-X86Restricted (ex : Execution LabelLIMM) : Set₁ where
 open LIMM-X86Restricted
 
 
+-- | Relates the events in the source and target executions, following the
+-- mapping on the instructions.
 record X86⇒LIMM (src : Execution LabelX86) (dst : Execution LabelLIMM) : Set where
   field
     -- Instrs: RMOV    ↦ LD;F_LD_M

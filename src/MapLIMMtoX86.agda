@@ -60,7 +60,8 @@ record X86-LIMMRestricted (ex : Execution LabelX86) : Set₁ where
 
 
 
--- | Relates the source and target execution by the mapping rules
+-- | Relates the events in the source and target executions, following the
+-- mapping on the instructions.
 record LIMM⇒X86 (src : Execution LabelLIMM) (dst : Execution LabelX86) : Set where
   field
   

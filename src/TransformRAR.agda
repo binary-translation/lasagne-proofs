@@ -74,7 +74,8 @@ module Extra {ex : Execution LabelLIMM} (ex-ok : RAR-Restricted ex) where
   preserved-has-val = r-has-val (rₜ⇒r preserved-ev-r)
 
 
--- | Relates the source and target executions.
+-- | Relates the events in the source and target executions, following the
+-- transformation on the instructions.
 --
 -- If the source has the additional read event, then - by WellFormedness - it is part of the execution.
 record RARMapping (src : Execution LabelLIMM) {dst : Execution LabelLIMM} (dst-res : RAR-Restricted dst) : Set where
